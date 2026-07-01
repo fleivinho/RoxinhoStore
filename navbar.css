@@ -1,0 +1,50 @@
+.navbar {
+  width: 100%;
+  background-color: #555;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navbar a {
+  text-align: center;
+  padding: 14px;
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
+  display: inline-block;
+}
+
+.navbar a:hover {
+  background-color: #000;
+}
+
+.marca {
+  font-weight: bold;
+  background-color: #6f00ff;
+}
+
+.navitems {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.navbar .active {
+  background-color: #6f00ff;
+}
+
+@media screen and (max-width: 700px) {
+  .navbar {
+    display: block;
+  }
+
+  .navitems {
+    display: block;
+  }
+
+  .navbar a {
+    display: block;
+  }
+}
