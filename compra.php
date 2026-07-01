@@ -156,9 +156,9 @@ $resultado = mysqli_query($conexao, $sql);
     </table>
   </div>
 
-  <footer>
-    Roxinho Store - <?php echo date("Y"); ?>
-  </footer>
+ <?php
+  include "footer.php";
+?>
 </body>
 
 </html>

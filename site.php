@@ -78,7 +78,7 @@ $resultado = mysqli_query($conexao, $sql);
     }
 
     .price {
-      color: grey;
+      color: purple;
       font-size: 22px;
       margin-top: auto;
     }
@@ -106,16 +106,7 @@ $resultado = mysqli_query($conexao, $sql);
       font-size: 20px;
     }
 
-    footer {
-      background-color: #111;
-      color: white;
-      text-align: center;
-      padding: 18px;
-      margin-top: 20px;
-    }
-
-    @media screen and (max-width: 600px) {
-    }
+    @media screen and (max-width: 600px) {}
   </style>
 </head>
 
@@ -127,20 +118,22 @@ $resultado = mysqli_query($conexao, $sql);
 
   <div class="topo">
     <h1>Roxinho Store</h1>
-    <p>Produtos disponíveis para compra</p>
+    <p>A loja número 1 da américa latina.</p>
   </div>
 
   <div class="cards" id="produtos">
     <?php if (mysqli_num_rows($resultado) > 0) { ?>
       <?php while ($produto = mysqli_fetch_assoc($resultado)) { ?>
         <div class="card">
-          <img class="imagem" src="<?php echo htmlspecialchars($produto["imagem"]); ?>" alt="<?php echo htmlspecialchars($produto["nome"]); ?>">
+          <img class="imagem" src="<?php echo htmlspecialchars($produto["imagem"]); ?>"
+            alt="<?php echo htmlspecialchars($produto["nome"]); ?>">
           <h2><?php echo htmlspecialchars($produto["nome"]); ?></h2>
           <p class="desc"><?php echo htmlspecialchars($produto["descricao"]); ?></p>
           <p class="price">R$ <?php echo number_format($produto["preco"], 2, ",", "."); ?></p>
-          <a href="pagar.php?id=<?php echo $produto["id"]; ?>">
-            <button>Comprar</button>
-          </a>
+          <p>Vendas: <b><?php echo ($produto["vendas"]); ?></b></p>
+            <a href="pagar.php?id=<?php echo $produto["id"]; ?>">
+              <button>Comprar</button>
+            </a>
         </div>
       <?php } ?>
     <?php } else { ?>
@@ -148,9 +141,10 @@ $resultado = mysqli_query($conexao, $sql);
     <?php } ?>
   </div>
 
-  <footer>
-    Roxinho Store - <?php echo date("Y"); ?>
-  </footer>
+    <?php
+      include "footer.php";
+    ?>
+
 </body>
 
 </html>

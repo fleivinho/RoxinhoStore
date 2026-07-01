@@ -25,6 +25,13 @@ if (!empty($_POST["produto_id"])) {
     $produtoCompra = mysqli_fetch_assoc($resultadoProduto);
     $preco = (float) $produtoCompra["preco"];
     mysqli_query($conexao, "INSERT INTO compras(usuario_id, produto_id, preco, data_compra) VALUES($usuario_id, $id, $preco, NOW())");
+   
+    mysqli_query($conexao, "
+      UPDATE produtos
+      SET vendas = vendas + 1
+      WHERE id = $id
+    ");
+
     $finalizado = true;
   }
 }
@@ -86,7 +93,7 @@ $produto = mysqli_fetch_assoc($resultado);
     }
 
     .preco {
-      color: grey;
+      color: purple;
       font-size: 24px;
     }
 
@@ -124,7 +131,8 @@ $produto = mysqli_fetch_assoc($resultado);
 
   <div class="box">
     <h1><?php echo htmlspecialchars($produto["nome"]); ?></h1>
-    <img class="produto" src="<?php echo htmlspecialchars($produto["imagem"]); ?>" alt="<?php echo htmlspecialchars($produto["nome"]); ?>">
+    <img class="produto" src="<?php echo htmlspecialchars($produto["imagem"]); ?>"
+      alt="<?php echo htmlspecialchars($produto["nome"]); ?>">
     <p><?php echo htmlspecialchars($produto["descricao"]); ?></p>
     <p class="preco">R$ <?php echo number_format($produto["preco"], 2, ",", "."); ?></p>
 
@@ -132,7 +140,8 @@ $produto = mysqli_fetch_assoc($resultado);
       <p class="sucesso">Compra registrada com sucesso.</p>
     <?php } else { ?>
       <h2>Pagamento PIX</h2>
-      <img class="pix" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM5JAVC0_zJa7U5KLUh-GH_F__ddzHLDmx_w&s" alt="PIX">
+      <img class="pix" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM5JAVC0_zJa7U5KLUh-GH_F__ddzHLDmx_w&s"
+        alt="PIX">
       <p>Escaneie para pagar e finalize a compra.</p>
       <form action="pagar.php?id=<?php echo $produto["id"]; ?>" method="POST">
         <input type="hidden" name="produto_id" value="<?php echo $produto["id"]; ?>">

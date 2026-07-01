@@ -9,21 +9,25 @@ if (!isset($_SESSION["id"]) || $_SESSION["tipo"] != "administrador") {
 include "conecta.php";
 
 $editando = false;
-$produto = array("id" => "", "nome" => "", "descricao" => "", "preco" => "", "imagem" => "");
+$produto = [
+  "id" => "",
+  "nome" => "",
+  "descricao" => "",
+  "preco" => "",
+  "imagem" => ""
+];
 
 if (!empty($_GET["editar"])) {
   $id = (int) $_GET["editar"];
-  $sqlEditar = "SELECT * FROM produtos WHERE id = $id";
-  $resultadoEditar = mysqli_query($conexao, $sqlEditar);
+  $resultadoEditar = mysqli_query($conexao, "SELECT * FROM produtos WHERE id = $id");
 
-  if (mysqli_num_rows($resultadoEditar) > 0) {
-    $produto = mysqli_fetch_assoc($resultadoEditar);
+  if ($dados = mysqli_fetch_assoc($resultadoEditar)) {
+    $produto = $dados;
     $editando = true;
   }
 }
 
-$sql = "SELECT * FROM produtos ORDER BY id DESC";
-$resultado = mysqli_query($conexao, $sql);
+$resultado = mysqli_query($conexao, "SELECT * FROM produtos ORDER BY id DESC");
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -33,6 +37,7 @@ $resultado = mysqli_query($conexao, $sql);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administração</title>
   <link rel="stylesheet" href="navbar.css">
+
   <style>
     * {
       box-sizing: border-box;
@@ -41,14 +46,14 @@ $resultado = mysqli_query($conexao, $sql);
 
     body {
       margin: 0;
-      background-color: #2c313c;
-      color: white;
+      background: #2c313c;
+      color: #fff;
     }
 
     .conteudo {
       max-width: 1100px;
-      margin: 0 auto;
-      padding: 25px 15px;
+      margin: auto;
+      padding: 20px;
     }
 
     h1 {
@@ -56,11 +61,10 @@ $resultado = mysqli_query($conexao, $sql);
     }
 
     .painel {
-      background-color: whitesmoke;
+      background: #fff;
       color: #222;
       padding: 20px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
     }
 
     label {
@@ -71,41 +75,35 @@ $resultado = mysqli_query($conexao, $sql);
     textarea {
       width: 100%;
       padding: 10px;
-      margin: 6px 0 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
+      margin: 5px 0 15px;
     }
 
     textarea {
-      min-height: 80px;
       resize: vertical;
+      min-height: 80px;
     }
 
     .botao {
-      background-color: #6f00ff;
+      background: #6f00ff;
       color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-      padding: 12px 16px;
+      border: 0;
+      padding: 10px 15px;
       text-decoration: none;
-      display: inline-block;
-      font-size: 15px;
+      cursor: pointer;
     }
 
     .cancelar {
-      background-color: #555;
+      background: #666;
     }
 
     .excluir {
-      background-color: #d22;
+      background: #d22;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: white;
+      background: #fff;
       color: #222;
     }
 
@@ -113,12 +111,10 @@ $resultado = mysqli_query($conexao, $sql);
     td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
-      text-align: left;
-      vertical-align: middle;
     }
 
     th {
-      background-color: #6f00ff;
+      background: #6f00ff;
       color: white;
     }
 
@@ -126,119 +122,113 @@ $resultado = mysqli_query($conexao, $sql);
       width: 70px;
       height: 55px;
       object-fit: cover;
-      background-color: #ddd;
-    }
-
-    .acoes {
-      white-space: nowrap;
     }
 
     footer {
-      background-color: #111;
-      color: white;
       text-align: center;
-      padding: 18px;
-      margin-top: 20px;
-    }
-
-    @media screen and (max-width: 700px) {
-      table,
-      thead,
-      tbody,
-      th,
-      td,
-      tr {
-        display: block;
-      }
-
-      thead {
-        display: none;
-      }
-
-      td {
-        border-bottom: none;
-      }
-
-      tr {
-        margin-bottom: 15px;
-        border-bottom: 2px solid #ddd;
-      }
+      padding: 20px;
+      background: #111;
+      color: #fff;
     }
   </style>
 </head>
 
 <body>
+
   <?php
   $paginaAtual = "admin";
   include "navbar.php";
   ?>
 
   <div class="conteudo">
+
     <h1>Área Administrativa</h1>
 
     <div class="painel">
-      <h2><?php echo $editando ? "Alterar Produto" : "Cadastrar Produto"; ?></h2>
-      <form action="produto_salvar.php" method="POST">
-        <input type="hidden" name="id" value="<?php echo htmlspecialchars($produto["id"]); ?>">
 
-        <label for="nome">Nome</label>
-        <input type="text" name="nome" id="nome" value="<?php echo htmlspecialchars($produto["nome"]); ?>" required>
+      <h2><?= $editando ? "Alterar Produto" : "Cadastrar Produto" ?></h2>
 
-        <label for="descricao">Descrição</label>
-        <textarea name="descricao" id="descricao" required><?php echo htmlspecialchars($produto["descricao"]); ?></textarea>
+      <form action="produto_salvar.php" method="POST" enctype="multipart/form-data">
 
-        <label for="preco">Preço</label>
-        <input type="number" name="preco" id="preco" step="0.01" min="0" value="<?php echo htmlspecialchars($produto["preco"]); ?>" required>
+        <input type="hidden" name="id" value="<?= $produto["id"] ?>">
 
-        <label for="imagem">Imagem</label>
-        <input type="text" name="imagem" id="imagem" value="<?php echo htmlspecialchars($produto["imagem"]); ?>" required>
+        <label>Nome</label>
+        <input type="text" name="nome" value="<?= htmlspecialchars($produto["nome"]) ?>" required>
 
-        <input class="botao" type="submit" value="<?php echo $editando ? "Salvar alterações" : "Cadastrar produto"; ?>">
+        <label>Descrição</label>
+        <textarea name="descricao" required><?= htmlspecialchars($produto["descricao"]) ?></textarea>
+
+        <label>Preço</label>
+        <input type="number" name="preco" step="0.01" min="0" value="<?= htmlspecialchars($produto["preco"]) ?>"
+          required>
+
+        <label>Imagem</label>
+
+        <?php if ($editando && $produto["imagem"] != "") { ?>
+          <img src="<?= htmlspecialchars($produto["imagem"]) ?>" class="foto"><br><br>
+        <?php } ?>
+
+        <input type="file" name="imagem" accept="image/*">
+
+        <input class="botao" type="submit" value="<?= $editando ? "Salvar alterações" : "Cadastrar produto" ?>">
+
         <?php if ($editando) { ?>
           <a class="botao cancelar" href="admin.php">Cancelar</a>
         <?php } ?>
+
       </form>
+
     </div>
 
     <div class="painel">
       <h2>Produtos Cadastrados</h2>
       <table>
-        <thead>
+        <tr>
+          <th>Imagem</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Preço</th>
+          <th>Ações</th>
+        </tr>
+
+        <?php while ($item = mysqli_fetch_assoc($resultado)) { ?>
+
           <tr>
-            <th>Imagem</th>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Preço</th>
-            <th>Ações</th>
+
+            <td>
+              <img class="foto" src="<?= htmlspecialchars($item["imagem"]) ?>" alt="">
+            </td>
+
+            <td><?= htmlspecialchars($item["nome"]) ?></td>
+
+            <td><?= htmlspecialchars($item["descricao"]) ?></td>
+
+            <td>R$ <?= number_format($item["preco"], 2, ",", ".") ?></td>
+
+            <td>
+              <a class="" href="admin.php?editar=<?= $item["id"] ?>">Alterar</a>
+                
+              <a class="" href="produto_excluir.php?id=<?= $item["id"] ?>"
+                onclick="return confirm('Deseja excluir este produto?')">
+                Excluir
+              </a>
+          
+            </td>
+    
           </tr>
-        </thead>
-        <tbody>
-          <?php if (mysqli_num_rows($resultado) > 0) { ?>
-            <?php while ($item = mysqli_fetch_assoc($resultado)) { ?>
-              <tr>
-                <td><img class="foto" src="<?php echo htmlspecialchars($item["imagem"]); ?>" alt="<?php echo htmlspecialchars($item["nome"]); ?>"></td>
-                <td><?php echo htmlspecialchars($item["nome"]); ?></td>
-                <td><?php echo htmlspecialchars($item["descricao"]); ?></td>
-                <td>R$ <?php echo number_format($item["preco"], 2, ",", "."); ?></td>
-                <td class="acoes">
-                  <a class="botao" href="admin.php?editar=<?php echo $item["id"]; ?>">Alterar</a>
-                  <a class="botao excluir" href="produto_excluir.php?id=<?php echo $item["id"]; ?>" onclick="return confirm('Deseja excluir este produto?')">Excluir</a>
-                </td>
-              </tr>
-            <?php } ?>
-          <?php } else { ?>
-            <tr>
-              <td colspan="5">Nenhum produto cadastrado.</td>
-            </tr>
-          <?php } ?>
-        </tbody>
+
+        <?php } ?>
+
       </table>
+
     </div>
+
   </div>
 
-  <footer>
-    Roxinho Store - <?php echo date("Y"); ?>
-  </footer>
+  <?php
+  include "footer.php";
+  ?>
+
 </body>
 
 </html>
